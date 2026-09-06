@@ -8,6 +8,7 @@ PORT="${PORT:-8080}"
 envsubst '${PORT}' < /etc/nginx/templates/server.conf.template > /etc/nginx/http.d/server.conf
 
 if [ -z "$APP_KEY" ]; then
+    [ -f /app/.env ] || cp /app/.env.example /app/.env
     php artisan key:generate --no-interaction
 fi
 
