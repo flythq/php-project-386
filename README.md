@@ -13,6 +13,20 @@
 - [PHPUnit](https://phpunit.de) / [Laravel Pint](https://laravel.com/docs/pint)
 - SQLite
 
+## Деплой
+
+Приложение собрано в Docker-образ (multi-stage: Node.js для Vite-сборки + PHP-FPM 8.4 с Nginx) и развёрнуто на [Railway](https://railway.app).
+
+Публичная ссылка: https://app-production-f2a7.up.railway.app
+
+Архитектура:
+- **Dockerfile** — multi-stage сборка: `node:20-alpine` (Vite) → `php:8.4-fpm-alpine` + Nginx
+- **Запуск по PORT** — Nginx слушает `$PORT` (Railway передаёт порт через env)
+- **SQLite на persistent volume** — БД на volume `/app/db-vol`, данные переживают редеплой
+- **docker/start.sh** — envsubst-рендеринг nginx.conf, миграции, запуск PHP-FPM + Nginx
+
+Health-чек: `/up`
+
 ## Запуск
 
 ```bash
@@ -23,6 +37,15 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate
 composer run dev
+```
+
+Приложение откроется на http://localhost:8000.
+
+## Docker-запуск
+
+```bash
+docker build -t call-calendar .
+docker run --rm -e PORT=8000 -p 8000:8000 call-calendar
 ```
 
 Приложение откроется на http://localhost:8000.
