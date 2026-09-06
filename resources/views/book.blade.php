@@ -3,73 +3,78 @@
 @section('title', 'Запись на звонок')
 
 @section('content')
-    <section>
-        <h1 class="text-3xl font-semibold tracking-tight text-gray-900 dark:text-white">
+    <div class="mx-auto max-w-3xl">
+        <a href="{{ route('home.index') }}" class="inline-flex items-center gap-1 text-sm text-neutral-500 transition hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                <path d="m12 19-7-7 7-7M19 12H5"/>
+            </svg>
+            На главную
+        </a>
+
+        <h1 class="mt-4 text-3xl font-semibold tracking-tight text-neutral-900 dark:text-white">
             Запись на звонок
         </h1>
-        <p class="mt-3 text-gray-600 dark:text-gray-400">
+        <p class="mt-2 text-neutral-600 dark:text-neutral-400">
             Выберите свободный 30-минутный слот и оставьте свои данные.
         </p>
 
         @if (session('status'))
-            <p class="mt-4 rounded-lg bg-green-50 dark:bg-green-900/30 px-4 py-3 text-sm text-green-700 dark:text-green-300">
-                {{ session('status') }}
-            </p>
+            <div class="mt-6 flex items-start gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900/60 dark:bg-green-950/40 dark:text-green-300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 h-4 w-4 flex-shrink-0">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <path d="m9 11 3 3L22 4"/>
+                </svg>
+                <span>{{ session('status') }}</span>
+            </div>
         @endif
 
         @if ($slots->isEmpty())
-            <p class="mt-8 text-gray-600 dark:text-gray-400">
-                Свободных слотов пока нет. Загляните позже.
-            </p>
+            <x-empty-state class="mt-8" title="Свободных слотов пока нет" description="Загляните позже — организатор добавит новые окна доступности.">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                </svg>
+            </x-empty-state>
         @else
-            <form method="POST" action="{{ route('book.store') }}" class="mt-8 space-y-6">
+            <form method="POST" action="{{ route('book.store') }}" class="mt-8 space-y-8">
                 @csrf
-                <fieldset>
-                    <legend class="text-sm font-medium text-gray-900 dark:text-white">Свободные слоты</legend>
-                    <ul class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                        @foreach ($slots as $slot)
-                            @if ($slot->is_available)
-                                <li>
-                                    <label class="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800">
-                                        <input type="radio" name="slot_start_at" value="{{ $slot->start_at->toDateTimeString() }}" class="text-blue-600">
-                                        <span class="text-gray-900 dark:text-gray-100">{{ $slot->start_at->format('d.m.Y H:i') }}</span>
-                                    </label>
-                                </li>
-                            @endif
-                        @endforeach
-                    </ul>
-                    @error('slot_start_at')
-                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                    @enderror
-                </fieldset>
 
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div>
-                        <label for="invitee_name" class="block text-sm font-medium text-gray-900 dark:text-white">Имя</label>
-                        <input type="text" name="invitee_name" id="invitee_name" value="{{ old('invitee_name') }}" class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100">
-                        @error('invitee_name')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                <x-card class="p-6">
+                    <fieldset>
+                        <legend class="text-sm font-semibold text-neutral-900 dark:text-white">Свободные слоты</legend>
+                        <p class="mt-1 text-xs text-neutral-500 dark:text-neutral-400">Каждый слот — 30 минут. Выберите подходящее время.</p>
+                        <ul class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach ($slots as $slot)
+                                @if ($slot->is_available)
+                                    <li>
+                                        <label class="group flex cursor-pointer items-center gap-3 rounded-xl border border-neutral-300 px-4 py-3 transition hover:border-brand-400 hover:bg-brand-50/40 has-[:checked]:border-brand-500 has-[:checked]:bg-brand-50 has-[:checked]:ring-2 has-[:checked]:ring-brand-500/30 dark:border-neutral-700 dark:hover:border-brand-600 dark:hover:bg-brand-950/30 dark:has-[:checked]:border-brand-500 dark:has-[:checked]:bg-brand-950/50">
+                                            <input type="radio" name="slot_start_at" value="{{ $slot->start_at->toDateTimeString() }}" class="h-4 w-4 border-neutral-300 text-brand-600 focus:ring-brand-600 dark:border-neutral-600 dark:bg-neutral-700">
+                                            <span class="text-sm font-medium text-neutral-900 dark:text-neutral-100">{{ $slot->start_at->format('d.m.Y H:i') }}</span>
+                                        </label>
+                                    </li>
+                                @endif
+                            @endforeach
+                        </ul>
+                        @error('slot_start_at')
+                            <p class="mt-3 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
+                    </fieldset>
+                </x-card>
+
+                <x-card class="p-6">
+                    <h2 class="text-sm font-semibold text-neutral-900 dark:text-white">Ваши данные</h2>
+                    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <x-input label="Имя" name="invitee_name" :value="old('invitee_name')" />
+                        <x-input label="E-mail" name="invitee_email" type="email" :value="old('invitee_email')" />
                     </div>
-                    <div>
-                        <label for="invitee_email" class="block text-sm font-medium text-gray-900 dark:text-white">E-mail</label>
-                        <input type="email" name="invitee_email" id="invitee_email" value="{{ old('invitee_email') }}" class="mt-1 block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-gray-900 dark:text-gray-100">
-                        @error('invitee_email')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
+                </x-card>
+
+                <div class="flex items-center justify-end">
+                    <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-3 text-base font-medium text-white shadow-sm transition hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">
+                        Записаться
+                    </button>
                 </div>
-
-                <button type="submit" class="rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white hover:bg-blue-700">
-                    Записаться
-                </button>
             </form>
         @endif
-
-        <div class="mt-8">
-            <a href="{{ route('home.index') }}" class="inline-block rounded-lg border border-gray-300 dark:border-gray-700 px-6 py-3 text-base font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800">
-                На главную
-            </a>
-        </div>
-    </section>
+    </div>
 @endsection
