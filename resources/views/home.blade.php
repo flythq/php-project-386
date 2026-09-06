@@ -8,9 +8,12 @@
         <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">
             Запишитесь на 30-минутный звонок в удобное время — просто и без переписки.
         </p>
-        <div class="mt-8">
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
             <a href="{{ route('book.index') }}" class="inline-block rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white hover:bg-blue-700">
                 Записаться на звонок
+            </a>
+            <a href="{{ route('availabilities.index') }}" class="inline-block rounded-lg border border-gray-300 px-6 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800">
+                Управление доступностью
             </a>
         </div>
     </section>
