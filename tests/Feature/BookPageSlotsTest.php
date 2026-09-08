@@ -37,7 +37,8 @@ class BookPageSlotsTest extends TestCase
         $response = $this->get(route('book.index'));
 
         $response->assertStatus(200);
-        $response->assertSee($futureSlot->format('d.m.Y H:i'));
+        $response->assertSee($futureSlot->toDateTimeString());
+        $response->assertSee($futureSlot->format('H:i').'–'.$futureSlot->copy()->addMinutes(30)->format('H:i'));
     }
 
     public function test_book_page_excludes_past_slots(): void
@@ -61,7 +62,7 @@ class BookPageSlotsTest extends TestCase
         $response = $this->get(route('book.index'));
 
         $response->assertStatus(200);
-        $response->assertDontSee($pastTime->format('d.m.Y H:i'));
+        $response->assertDontSee($pastTime->toDateTimeString());
     }
 
     public function test_book_page_excludes_booked_slots(): void
@@ -94,7 +95,9 @@ class BookPageSlotsTest extends TestCase
         $response = $this->get(route('book.index'));
 
         $response->assertStatus(200);
-        $response->assertDontSee($bookedStart->format('d.m.Y H:i'));
+        $response->assertDontSee($bookedStart->toDateTimeString());
+        $response->assertSee($bookedStart->format('H:i').'–'.$bookedStart->copy()->addMinutes(30)->format('H:i'));
+        $response->assertSee('aria-disabled="true"', false);
     }
 
     public function test_book_page_excludes_slots_outside_availability_windows(): void
@@ -119,8 +122,8 @@ class BookPageSlotsTest extends TestCase
         $response = $this->get(route('book.index'));
 
         $response->assertStatus(200);
-        $response->assertDontSee($future->setTime(11, 0)->format('d.m.Y H:i'));
-        $response->assertDontSee($future->setTime(9, 30)->format('d.m.Y H:i'));
+        $response->assertDontSee($future->setTime(11, 0)->toDateTimeString());
+        $response->assertDontSee($future->setTime(9, 30)->toDateTimeString());
     }
 
     public function test_book_page_aligns_slots_to_half_hour_boundaries(): void
@@ -142,9 +145,9 @@ class BookPageSlotsTest extends TestCase
         $response = $this->get(route('book.index'));
 
         $response->assertStatus(200);
-        $response->assertSee($future->format('d.m.Y H:i'));
-        $response->assertSee($future->copy()->setTime(11, 0)->format('d.m.Y H:i'));
-        $response->assertDontSee($future->copy()->setTime(10, 15)->format('d.m.Y H:i'));
-        $response->assertDontSee($future->copy()->setTime(11, 30)->format('d.m.Y H:i'));
+        $response->assertSee($future->toDateTimeString());
+        $response->assertSee($future->copy()->setTime(11, 0)->toDateTimeString());
+        $response->assertDontSee($future->copy()->setTime(10, 15)->toDateTimeString());
+        $response->assertDontSee($future->copy()->setTime(11, 30)->toDateTimeString());
     }
 }

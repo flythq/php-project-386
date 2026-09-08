@@ -23,6 +23,8 @@ class HomeController extends Controller
             $now->addDays(config('booking.horizon_days', 14))->endOfDay(),
         );
 
-        return view('book', ['slots' => $slots]);
+        return view('book', [
+            'days' => $slots->groupBy(fn ($slot) => $slot->start_at->format('Y-m-d')),
+        ]);
     }
 }
